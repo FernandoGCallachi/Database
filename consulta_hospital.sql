@@ -87,33 +87,33 @@
 -- filter case use -- 
 -- O paciente foi atendido por qual medico?--
 	select medicosPacientes.fk_medico_id, medicos.nome, medicosPacientes.fk_paciente_id,  pacientes.nome
-	from  pacientes join medicos join  medicosPacientes
-	on medicos.medico_id = medicosPacientes.fk_medico_id &&
-	pacientes.paciente_id = medicosPacientes.fk_paciente_id ;
+	from medicosPacientes
+    inner join pacientes	on pacientes.paciente_id = medicosPacientes.fk_paciente_id
+    inner join medicos 		on medicos.medico_id = medicosPacientes.fk_medico_id;
 
 -- Quais pacientes fizeram exames--
 	select pacientes.nome,exames.presente, exames.tipoExame, exames.jejum, exames.horaExame
-	from pacientes join exames
-	on exames.fk_paciente_id = pacientes.paciente_id;
+	from pacientes 
+    inner join exames on exames.fk_paciente_id = pacientes.paciente_id;
 
 -- Quais fizeram consultas --
 	select pacientes.nome, consultas.horaConsulta, consultas.tipoConsulta
-	from pacientes join consultas
-	on consultas.fk_paciente_id = pacientes.paciente_id;
+	from pacientes
+    inner join consultas on consultas.fk_paciente_id = pacientes.paciente_id;
 
 -- Quais pacientes estavam no setor --
 	select pacientes.nome, setores.risco, setores.tipoSetor
-	from pacientes join setores
-	on setores.fk_paciente_id = pacientes.paciente_id;
+	from pacientes 
+    inner join setores on setores.fk_paciente_id = pacientes.paciente_id;
 
 -- O medico fez o prontuario de quais pacientes?--
 	select medicos.nome , prontuarios.observacao , pacientes.nome
-	from medicos join prontuarios join pacientes
-	on prontuarios.fk_medico_id = medicos.medico_id &&
-	prontuarios.fk_paciente_id = pacientes.paciente_id;
+	from medicos
+	inner join prontuarios 	on prontuarios.fk_medico_id = medicos.medico_id
+    inner join pacientes	on prontuarios.fk_paciente_id = pacientes.paciente_id;	
 
 -- Quais receitas o medico indicou para o paciente--
 	select medicos.nome , prontuarios.observacao , pacientes.nome
-	from medicos join prontuarios join pacientes
-	on prontuarios.fk_medico_id = medicos.medico_id &&
-	prontuarios.fk_paciente_id = pacientes.paciente_id
+	from medicos
+    inner join prontuarios 	on prontuarios.fk_medico_id = medicos.medico_id 
+    inner join pacientes 	on prontuarios.fk_paciente_id = pacientes.paciente_id;

@@ -41,10 +41,10 @@
 -- 2 Os melhores alunos por média de nota de cada disciplina --
    select p.nome as nome_aluno, dc.nomeDisciplina, avg(av.nota) as nota 
    from pessoa p 
-   inner join aluno al 		     	on p.pessoa_id = al.fk_pessoa_id
-   inner join alunoDisciplina ad 	on al.aluno_id = ad.fk_aluno_id 
-   inner join avaliacao av 			on al.aluno_id = av.fk_aluno_id 
-   inner join disciplina dc 		on (
+   inner join aluno al 		     on p.pessoa_id = al.fk_pessoa_id
+   inner join alunoDisciplina ad on al.aluno_id = ad.fk_aluno_id 
+   inner join avaliacao av 		 on al.aluno_id = av.fk_aluno_id 
+   inner join disciplina dc 	 on (
    dc.disciplina_id = ad.fk_disciplina_id &&
    dc.disciplina_id = av.fk_disciplina_id)
    group by nome_aluno, dc.nomeDisciplina
@@ -53,62 +53,64 @@
 -- 3 Todas as turmas cadastradas separadas por disciplina e o nome do professor --     
 	select t.turma_id, d.nomeDisciplina, (p.nome)as nomeProfesor 
     from disciplina d 
-    inner join professor pf 	on pf.fk_disciplina_id = d.disciplina_id
-    inner join pessoa p 		on p.pessoa_id = pf.fk_pessoa_id
+    inner join professor pf 	 on pf.fk_disciplina_id = d.disciplina_id
+    inner join pessoa p 		 on p.pessoa_id = pf.fk_pessoa_id
 	inner join professorTurma pt on pf.professor_id = pt.fk_professor_id	
-    inner join turma t 			on t.turma_id = pt.fk_turma_id
+    inner join turma t 			 on t.turma_id = pt.fk_turma_id
     order by p.nome, d.nomeDisciplina;
     
 -- case use -- 
 -- Aluno --
 	-- Informações do aluno especifico --
 		select  pessoa.*, aluno.curso, aluno.RA, aluno.periodo
-        from pessoa join aluno
-        on pessoa.pessoa_id = aluno.fk_pessoa_id &&
-		aluno.RA = 2388216;
+        from pessoa
+        inner join aluno on (
+        pessoa.pessoa_id = aluno.fk_pessoa_id &&
+		aluno.RA = 2388216);
          
 	-- Aluno faz qual curso --
 		select pessoa.nome, aluno.curso, aluno.RA 
-        from pessoa join aluno 
-		on pessoa.pessoa_id = aluno.fk_pessoa_id;
+        from pessoa 
+        inner join aluno on pessoa.pessoa_id = aluno.fk_pessoa_id;
         
     -- Aluno está em qual turma --   
 		select pessoa.nome, aluno.RA, turma.numeroTurma 
-        from  aluno join pessoa join  turma 
-        on aluno.fk_turma_id = turma.turma_id && 
-        pessoa.pessoa_id = aluno.fk_pessoa_id;
+        from  turma
+        inner join  aluno on aluno.fk_turma_id = turma.turma_id
+        inner join pessoa on pessoa.pessoa_id = aluno.fk_pessoa_id;
         
     -- Qual a nota que o aluno tirou na prova --    
 		select pessoa.nome, disciplina.nomeDisciplina, avaliacao.nota
-        from pessoa join disciplina join avaliacao join aluno
-		on avaliacao.fk_disciplina_id = disciplina.disciplina_id &&
-        pessoa.pessoa_id = aluno.fk_pessoa_id &&
-        aluno.aluno_id = avaliacao.fk_aluno_id;
+        from disciplina
+        inner join avaliacao on avaliacao.fk_disciplina_id = disciplina.disciplina_id 
+        inner join aluno 	on aluno.aluno_id = avaliacao.fk_aluno_id
+        inner join pessoa 	on pessoa.pessoa_id = aluno.fk_pessoa_id;        
        
 	-- Aluno tem quais disciplinas --   
 		select pessoa.nome, disciplina.nomeDisciplina
-        from pessoa join disciplina join aluno join alunoDisciplina 
-        on pessoa.pessoa_id = aluno.fk_pessoa_id &&
-        aluno.aluno_id = alunoDisciplina.fk_aluno_id &&
-        disciplina.disciplina_id = alunoDisciplina.fk_disciplina_id;
+        from alunoDisciplina 
+        inner join aluno 	  on  aluno.aluno_id = alunoDisciplina.fk_aluno_id
+        inner join pessoa 	  on pessoa.pessoa_id = aluno.fk_pessoa_id
+        inner join disciplina on  disciplina.disciplina_id = alunoDisciplina.fk_disciplina_id       
+        order by nome;
   
 -- Professor -- 
 	-- Infomações do professor -- 
-		select pessoa.*, professor.professor_id, professor.registro, professor.formacao,
-		disciplina.nomeDisciplina from  pessoa join professor join disciplina
-		on  pessoa.pessoa_id = professor.fk_pessoa_id  &&
-        disciplina.disciplina_id = professor.fk_disciplina_id &&		  
-		pessoa.nome = "jhony";
+		select pessoa.*, professor.professor_id, professor.registro, professor.formacao, disciplina.nomeDisciplina 
+        from professor 
+        inner join  pessoa 	  on  pessoa.pessoa_id = professor.fk_pessoa_id
+        inner join disciplina on disciplina.disciplina_id = professor.fk_disciplina_id
+        where pessoa.nome = "jhony";
             
 	-- Professor da aula para qual turma --
        select pessoa.nome, professorTurma.fk_turma_id
-       from pessoa join professorTurma join professor join turma
-       on pessoa.pessoa_id = professor.fk_pessoa_id  &&
-       turma.turma_id = professorTurma.fk_turma_id &&
-       professor.professor_id = professorTurma.fk_professor_id;
+       from professorTurma
+       inner join pessoa 	on pessoa.pessoa_id = professor.fk_pessoa_id
+       inner join professor on professor.professor_id = professorTurma.fk_professor_id
+       inner join turma 	on turma.turma_id = professorTurma.fk_turma_id;
 	       					
     -- Professor da qual diciplina -- 
         select pessoa.nome, professor.registro, disciplina.nomeDisciplina
-        from pessoa join professor join disciplina
-        on pessoa.pessoa_id = professor.fk_pessoa_id &&
-        disciplina.disciplina_id = professor.fk_disciplina_id;
+        from professor
+        inner join pessoa on pessoa.pessoa_id = professor.fk_pessoa_id 
+        inner join disciplina on disciplina.disciplina_id = professor.fk_disciplina_id;
