@@ -65,9 +65,10 @@
 -- 8 O total de consultas realizadas de cada paciente--
 	select p.nome, count(*) as total_de_consultas
     from consultas c
-    join pacientes p
+    inner join pacientes p
     on p.paciente_id = c.fk_paciente_id
-    group by fk_paciente_id;
+    group by fk_paciente_id
+    order by total_de_consultas;
 
 -- 9 O nome do paciente e as datas de consulta mais recente e mais antiga --
     select p.nome, min(c.data_consulta) as antiga, max(c.data_consulta) as recente

@@ -28,12 +28,10 @@
     ip.itensPedidos_id = pg.fk_itensPedidos_id &&
     pg.pagamento_id = ip.fk_pagamento_id)
     where (
-    day (pg.dataPagamento) = 01 ||
-	day (pg.dataPagamento) = 31 && 
-	(month(pg.dataPagamento) = 03 || month(pg.dataPagamento) = 05 || month(pg.dataPagamento) = 07 || month(pg.dataPagamento) = 08 || month(pg.dataPagamento) = 10 || month(pg.dataPagamento) = 12) ||
-	day (pg.dataPagamento) = 30 && 
-    (month(pg.dataPagamento) = 04 || month(pg.dataPagamento) = 06 || month(pg.dataPagamento) = 09 || month(pg.dataPagamento) = 11) ||
-    day (pg.dataPagamento) = 28 && month(pg.dataPagamento) = 2)
+    day(pg.dataPagamento) = 01 ||
+	day(pg.dataPagamento) = 31 ||
+	(day(pg.dataPagamento) = 30 && (month(pg.dataPagamento) in (04, 06, 09, 11 ))) || 
+    day(pg.dataPagamento) = 28 && month(pg.dataPagamento) = 2)
 	order by pg.dataPagamento; 
 
 -- 5 Pedidos com valor total maior que 10.000 ordenados pelo valor total e pela data do pedido --
@@ -53,9 +51,9 @@
     order by vendidos desc, mes limit 3;
 
 -- 7 Os 5(3) nomes de clientes com o maior valor médio de pedidos realizados --
-	select clientes.nomeCliente, count(*) as quant_pedidos
-    from clientes 
-    inner join pedidos on clientes.cliente_id = pedidos.fk_cliente_id 
+	select c.nomeCliente, count(*) as quant_pedidos
+    from clientes c 
+    inner join pedidos p on c.cliente_id = p.fk_cliente_id 
     group by cliente_id 
     order by quant_pedidos desc limit 3; 
 
