@@ -51,10 +51,10 @@
    order by nota desc;
 
 -- 3 Todas as turmas cadastradas separadas por disciplina e o nome do professor --     
-	select t.turma_id, d.nomeDisciplina, (p.nome)as nomeProfesor 
+	select (p.nome)as nomeProfesor, d.nomeDisciplina,  t.turma_id
     from disciplina d 
-    inner join professor pf 	 on pf.fk_disciplina_id = d.disciplina_id
-    inner join pessoa p 		 on p.pessoa_id = pf.fk_pessoa_id
+    inner join professor pf		 on pf.fk_disciplina_id = d.disciplina_id
+    inner join pessoa p			 on p.pessoa_id = pf.fk_pessoa_id
 	inner join professorTurma pt on pf.professor_id = pt.fk_professor_id	
     inner join turma t 			 on t.turma_id = pt.fk_turma_id
     order by p.nome, d.nomeDisciplina;
@@ -62,12 +62,15 @@
 -- case use -- 
 -- Aluno --
 	-- Informações do aluno especifico --
-		select  pessoa.*, aluno.curso, aluno.RA, aluno.periodo
+		explain select  pessoa.*, aluno.curso, aluno.RA, aluno.periodo
         from pessoa
         inner join aluno on (
         pessoa.pessoa_id = aluno.fk_pessoa_id &&
 		aluno.RA = 2388216);
-         
+        
+        create index index_ra on aluno(RA);
+        show index from aluno;
+        
 	-- Aluno faz qual curso --
 		select pessoa.nome, aluno.curso, aluno.RA 
         from pessoa 
@@ -100,8 +103,12 @@
         from professor 
         inner join  pessoa 	  on  pessoa.pessoa_id = professor.fk_pessoa_id
         inner join disciplina on disciplina.disciplina_id = professor.fk_disciplina_id
-        where pessoa.nome = "jhony";
-            
+        where pessoa.nome 	  like "j%";
+        
+        create index idx_pessoa on pessoa(nome);
+        show index from pessoa;
+		drop index idx_pessoa on pessoa;
+        
 	-- Professor da aula para qual turma --
        select pessoa.nome, professorTurma.fk_turma_id
        from professorTurma
